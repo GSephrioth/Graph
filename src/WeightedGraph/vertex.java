@@ -8,26 +8,20 @@ package WeightedGraph;
 class Vertex {
     private String vertexName;
 
-    Vertex(String nodeName) {
-        this.vertexName = nodeName;
-    }
-
     Vertex() {
         this.vertexName = "";
     }
 
+    Vertex(String nodeName) {
+        this.vertexName = nodeName;
+    }
     public String getVertexName() {
         return vertexName;
     }
-
-    public void setVertexName(String vertexName) {
-        this.vertexName = vertexName;
-    }
-
     /**
      * toString
      * Override the 'toString' in class 'Object' return a String
-     * containing the detail of the Ndoe
+     * containing the detail of the Vertex
      */
     public String toString() {
         String str;

@@ -51,7 +51,7 @@ public class Graph {
                         while (i.hasNext()) {
                             String[] edge = i.next().toString().split("[,]");   //separate the line with 'comma'
                             int weight = Integer.valueOf(edge[1]);
-                            Edge e = new Edge(edge[0], weight); //Storing an Edge
+                            Edge e = new Edge(v.getVertexName(), edge[0], weight); //Storing an Edge
                             edgeList.add(e);
                         }
                         graph.put(v, edgeList);      //add the Vertex and Edges to the Graph
@@ -61,7 +61,7 @@ public class Graph {
             }
             reader.close(); //close the Buffered Reader
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
