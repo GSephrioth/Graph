@@ -10,15 +10,13 @@ import java.util.*;
  * Created by cxz on 2016/10/2.
  */
 public class Graph {
-    private Map<Vertex, List<Edge>> graph; // a graph using Vertex as key, and Edge as value
-
+    private HashMap<Vertex, List<Edge>> graph; // a graph using Vertex as key, and Edge as value
     /**
      * initialize an empty graph
      */
     public Graph() {
         graph = new HashMap<Vertex, List<Edge>>();
     }
-
     /**
      * readMap Read the map from a file, which must follow the listed pattern:
      * 1. Each line in the file represents a node and the edges linked to it.
@@ -68,11 +66,15 @@ public class Graph {
         temp.clear();
     }
 
-    /**
-     * toString
-     * Override the 'toString' in class 'Object' return a String
-     * containing the detail of the Graph
-     */
+    public int getVertexNumber() {
+        return graph.size();
+    }
+
+    public void add(Vertex v, List<Edge> e) {
+        graph.put(v, e);
+    }
+
+    @Override
     public String toString() {
         String str = "";
         if (graph.isEmpty())
@@ -83,5 +85,41 @@ public class Graph {
             }
         }
         return str;
+    }
+
+    /**
+     *
+     * */
+    public List<Edge> PrimMST(Vertex startVertex) {
+        List<Edge> result = new LinkedList<>();     // store the MST
+        MinHeap minHeap = new MinHeap();
+        Edge currentEdge;
+        Vertex currentVertex = startVertex;
+        List<Edge> temp;   // temp store the Edge List of the Current Vertex
+        HashSet<Vertex> vertexSet = new HashSet<>(graph.keySet());     // use a set to traversal all Vertices
+
+        // find and mark the start Vertex
+        vertexSet.remove(startVertex);
+        while (!vertexSet.isEmpty()) {
+            // put the Edges linked to current Vertex to MinHeap
+            temp = graph.get(currentVertex);
+            if (temp.isEmpty()) break;
+            for (Edge e : temp) {
+                if (vertexSet.contains(e.getEndVertex()))
+                    // Replace the element having the same endVertex or add the element
+                    minHeap.update(e);
+            }
+            temp.clear();
+
+            // select the edge with minimum weight
+            currentEdge = minHeap.popMin();
+            currentVertex = currentEdge.getEndVertex();
+
+            // add the selected edge to the MST
+            result.add(currentEdge);
+            // find and mark the current Vertex
+            vertexSet.remove(currentVertex);
+        }
+        return result;
     }
 }

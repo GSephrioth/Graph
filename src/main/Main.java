@@ -1,6 +1,6 @@
 package main;
 
-import WeightedGraph.Graph;
+import WeightedGraph.*;
 
 import java.lang.*;
 import java.nio.file.*;
@@ -19,7 +19,12 @@ public class Main {
 //		System.out.println(graph.BFS("4"));
 //		System.out.println(graph.ShortestPath_BFS("4", "6"));
 
-		WeightedGraph.Graph graph = new Graph(f);
-		System.out.println(graph);
+        Graph graph = new Graph(f);
+        System.out.println(graph);
+
+        Vertex v = new Vertex("1");
+        System.out.println(graph.PrimMST(v));
+
+
 	}
 }

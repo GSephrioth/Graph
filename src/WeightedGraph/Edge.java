@@ -11,42 +11,44 @@ class Edge {
     private Vertex startVertex;
 
     Edge() {
-        this.weight = 0;
-        this.startVertex = new Vertex("0");
-        this.endVertex = new Vertex("1");
+        this.weight = Integer.MAX_VALUE;
+        this.startVertex = new Vertex("");
+        this.endVertex = new Vertex("");
     }
-
     Edge(String startVertex, String endVertex, int weight) {
         this.weight = weight;
         this.startVertex = new Vertex(startVertex);
         this.endVertex = new Vertex(endVertex);
     }
-    public int getWeight() {
+
+    int getWeight() {
         return weight;
     }
 
-    public Vertex getStartVertex() {
+    Vertex getStartVertex() {
         return startVertex;
     }
-    public Vertex getEndVertex() {
+
+    Vertex getEndVertex() {
         return endVertex;
     }
-
     /**
-     * toString
-     * Override the 'toString' in class 'Object' return a String
-     * containing the detail of the Edge
-     */
+     * return true if the Current Edge is smaller than Edge 'e'
+     * */
+    boolean smallerThan(Edge e) {
+        return this.weight < e.getWeight();
+    }
+
+    boolean largerThan(Edge e) {
+        return this.weight > e.getWeight();
+    }
+
+    @Override
     public String toString() {
         String str;
-        str = " (" + this.endVertex + "," + this.weight + ") ";
+        str = " (" + this.startVertex + "," + this.endVertex + "," + this.weight + ") ";
         return str;
     }
 
-    /**
-     *
-     * */
-    public boolean smallerThan(Edge e) {
-        return this.weight < e.weight;
-    }
+
 }
