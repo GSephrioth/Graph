@@ -24,7 +24,7 @@ public class Main {
 
         Vertex v = new Vertex("1");
         System.out.println(graph.PrimMST(v));
-
+        System.out.println(graph.Dijkstras(v));
 
 	}
 }

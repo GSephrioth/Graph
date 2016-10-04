@@ -103,13 +103,13 @@ public class Graph {
         while (!vertexSet.isEmpty()) {
             // put the Edges linked to current Vertex to MinHeap
             temp = graph.get(currentVertex);
+
             if (temp.isEmpty()) break;
             for (Edge e : temp) {
                 if (vertexSet.contains(e.getEndVertex()))
                     // Replace the element having the same endVertex or add the element
                     minHeap.update(e);
             }
-            temp.clear();
 
             // select the edge with minimum weight
             currentEdge = minHeap.popMin();
@@ -119,6 +119,36 @@ public class Graph {
             result.add(currentEdge);
             // find and mark the current Vertex
             vertexSet.remove(currentVertex);
+        }
+        return result;
+    }
+
+    public Map<Vertex, Integer> Dijkstras(Vertex startVertex) {
+        Map<Vertex, Integer> result = new HashMap<Vertex, Integer>();
+        MinHeap minHeap = new MinHeap();
+        List<Edge> temp;   // temp store the Edge List of the Current Vertex
+        Vertex currentVertex = startVertex;
+        Edge currentEdge = new Edge(startVertex, startVertex, 0);
+
+        result.put(startVertex, currentEdge.getWeight());
+        while (result.size() < graph.size()) {
+            temp = graph.get(currentVertex);
+
+            if (temp.isEmpty()) break;
+            for (Edge e : temp) {
+                if (!result.keySet().contains(e.getEndVertex())) {
+                    // Replace the element having the same endVertex or add the element
+                    Edge t = new Edge(currentEdge.getStartVertex(), e.getEndVertex(), currentEdge.getWeight() + e.getWeight());
+                    minHeap.update(t);
+                }
+            }
+
+            // select the edge with minimum weight
+            currentEdge = minHeap.popMin();
+            currentVertex = currentEdge.getEndVertex();
+
+            // add the selected edge to the MST
+            result.put(currentVertex, currentEdge.getWeight());
         }
         return result;
     }

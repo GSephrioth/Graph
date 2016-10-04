@@ -21,28 +21,30 @@ class Edge {
         this.endVertex = new Vertex(endVertex);
     }
 
+    Edge(Vertex startVertex, Vertex endVertex, int weight) {
+        this.startVertex = startVertex;
+        this.endVertex = endVertex;
+        this.weight = weight;
+    }
     int getWeight() {
         return weight;
     }
-
     Vertex getStartVertex() {
         return startVertex;
     }
-
     Vertex getEndVertex() {
         return endVertex;
     }
+
     /**
      * return true if the Current Edge is smaller than Edge 'e'
      * */
     boolean smallerThan(Edge e) {
         return this.weight < e.getWeight();
     }
-
     boolean largerThan(Edge e) {
         return this.weight > e.getWeight();
     }
-
     @Override
     public String toString() {
         String str;

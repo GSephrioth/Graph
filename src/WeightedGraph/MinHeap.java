@@ -155,6 +155,11 @@ public class MinHeap {
         return temp;
     }
 
+    public Edge peekMin() {
+        Edge temp = heap.get(1);
+        return temp;
+    }
+
     public void update(Edge element) {
         boolean flag = false;
         if (heap.isEmpty()) {
@@ -175,5 +180,24 @@ public class MinHeap {
             }
         }
 
+    }
+
+    public void cumulative(Edge element) {
+        boolean flag = false;
+        if (heap.isEmpty()) {
+            insert(element);
+            return;
+        }
+        for (Edge e : heap) {
+            if (e.getEndVertex().equals(element.getStartVertex())) {
+                flag = true;
+                delete(heap.indexOf(e));
+                insert(new Edge(e.getStartVertex(), element.getEndVertex(), e.getWeight() + element.getWeight()));
+                break;
+            }
+        }
+        if (!flag) {
+            insert(element);
+        }
     }
 }
