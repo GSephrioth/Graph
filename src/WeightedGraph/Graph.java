@@ -13,6 +13,7 @@ public class Graph {
     private HashMap<Vertex, List<Edge>> graph; // a graph using Vertex as key, and Edge as value
     /**
      * initialize an empty graph
+     * Complexity: constant
      */
     public Graph() {
         graph = new HashMap<Vertex, List<Edge>>();
@@ -26,6 +27,8 @@ public class Graph {
      * eg. a b,1 c,2 d,3 e,4
      * It means 'a' is the current node and it is linked to four other nodes:'b' 'c' 'd' 'e'.
      * And weight of each Edges are:1 2 3 4.
+     *
+     * Complexity: number of Edges (E)
      */
     public Graph(File f) {
         graph = new HashMap<Vertex, List<Edge>>();
@@ -65,15 +68,6 @@ public class Graph {
         }
         temp.clear();
     }
-
-    public int getVertexNumber() {
-        return graph.size();
-    }
-
-    public void add(Vertex v, List<Edge> e) {
-        graph.put(v, e);
-    }
-
     @Override
     public String toString() {
         String str = "";
@@ -88,7 +82,8 @@ public class Graph {
     }
 
     /**
-     *
+     * Prim`s Algorithm for MST
+     * Complexity: V * V * log(V)
      * */
     public List<Edge> PrimMST(Vertex startVertex) {
         List<Edge> result = new LinkedList<>();     // store the MST
@@ -100,14 +95,23 @@ public class Graph {
 
         // find and mark the start Vertex
         vertexSet.remove(startVertex);
+        /**
+         * Complexity: V * V * log(V)
+         * */
         while (!vertexSet.isEmpty()) {
             // put the Edges linked to current Vertex to MinHeap
             temp = graph.get(currentVertex);
 
             if (temp.isEmpty()) break;
+            /**
+             * Complexity: V * log(V)
+             * */
             for (Edge e : temp) {
                 if (vertexSet.contains(e.getEndVertex()))
-                    // Replace the element having the same endVertex or add the element
+                /**
+                 * Replace the element having the same endVertex or add the element
+                 * Complexity: log(number of Vertex: V )
+                 */
                     minHeap.update(e);
             }
 
@@ -123,7 +127,12 @@ public class Graph {
         return result;
     }
 
-    public Map<Vertex, Integer> Dijkstras(Vertex startVertex) {
+    /**
+     * Dijkstra`s Algorithm for MST
+     * <p>
+     * Complexity: V * V * log(V)
+     */
+    public Map<Vertex, Integer> Dijkstra(Vertex startVertex) {
         Map<Vertex, Integer> result = new HashMap<Vertex, Integer>();
         MinHeap minHeap = new MinHeap();
         List<Edge> temp;   // temp store the Edge List of the Current Vertex
@@ -131,14 +140,24 @@ public class Graph {
         Edge currentEdge = new Edge(startVertex, startVertex, 0);
 
         result.put(startVertex, currentEdge.getWeight());
+        /**
+         * Complexity: V * V * log(V)
+         * */
         while (result.size() < graph.size()) {
             temp = graph.get(currentVertex);
 
             if (temp.isEmpty()) break;
+            /**
+             * Complexity: V * log(V)
+             * */
             for (Edge e : temp) {
                 if (!result.keySet().contains(e.getEndVertex())) {
                     // Replace the element having the same endVertex or add the element
                     Edge t = new Edge(currentEdge.getStartVertex(), e.getEndVertex(), currentEdge.getWeight() + e.getWeight());
+                    /**
+                     * Replace the element having the same endVertex or add the element
+                     * Complexity: log(number of Vertex: V )
+                     */
                     minHeap.update(t);
                 }
             }
