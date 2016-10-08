@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.*;
 
 /**
- *
+ * Minimum Heap
+ * specially designed for Edge
  * Created by cxz on 2016/10/3.
  */
 
@@ -14,16 +15,15 @@ public class MinHeap {
     MinHeap() {
         this.heap = new ArrayList<>();
     }
+
     /**
-     * delete heap[index]
-     * Complexity: log(n)
+     * swap heap[a] and heap[b]
+     * Complexity: constant
      */
-    public void delete(int index) {
-        // assign the last element to heap[index]
-        heap.set(index, heap.get(heap.size() - 1));
-        heapDown(index);
-        // remove the last element
-        heap.remove(heap.size() - 1);
+    public void swap(int a, int b) {
+        Edge temp = heap.get(a);
+        heap.set(a, heap.get(b));
+        heap.set(b, temp);
     }
 
     /**
@@ -55,29 +55,6 @@ public class MinHeap {
     }
 
     /**
-     * swap heap[a] and heap[b]
-     * Complexity: constant
-     */
-    public void swap(int a, int b) {
-        Edge temp = heap.get(a);
-        heap.set(a, heap.get(b));
-        heap.set(b, temp);
-    }
-
-    /**
-     * insert an element to heap
-     * Complexity: log(n)
-     */
-    public void insert(Edge element) {
-        // heap[0] is regard as empty
-        if (heap.size() == 0)
-            heap.add(new Edge("", "", 0));
-        // add the element at the end of the heap
-        heap.add(element);
-        heapUp(heap.size() - 1);
-    }
-
-    /**
      * Recursively move up the heap[index]
      * Complexity: log(n)
      */
@@ -95,10 +72,36 @@ public class MinHeap {
     }
 
     /**
+     * insert an element to heap
+     * Complexity: log(n)
+     */
+    public void insert(Edge element) {
+        // heap[0] is regard as empty
+        if (heap.size() == 0)
+            heap.add(new Edge("", "", 0));
+        // add the element at the end of the heap
+        heap.add(element);
+        heapUp(heap.size() - 1);
+    }
+
+    /**
+     * delete heap[index]
+     * Complexity: log(n)
+     */
+    public void delete(int index) {
+        // assign the last element to heap[index]
+        heap.set(index, heap.get(heap.size() - 1));
+        heapDown(index);
+        // remove the last element
+        heap.remove(heap.size() - 1);
+    }
+
+    /**
      * Read and delete heap[1]
      * Complexity: log(n)
      */
     public Edge popMin() {
+        if (heap.size() <= 1) return null;
         Edge temp = heap.get(1);
         delete(1);
         return temp;
@@ -130,4 +133,18 @@ public class MinHeap {
 
     }
 
+    /**
+     * find and return the Edges in the heap
+     * which has same Start Vertex Name and End Vertex Name as the param
+     * return null, if not found
+     */
+    public List<Edge> find(Vertex startVertex, Vertex endVertex) {
+        List<Edge> result = new LinkedList<>();
+        for (Edge e : heap) {
+            if (e.getStartVertex().equals(startVertex) && e.getEndVertex().equals(endVertex))
+                result.add(e);
+        }
+        if (result.isEmpty()) return null;
+        else return result;
+    }
 }

@@ -2,6 +2,7 @@ package WeightedGraph;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Undirected and Weighted Graph
@@ -68,6 +69,60 @@ public class Graph {
         }
         temp.clear();
     }
+
+    public boolean addEdge(String startVertexName, String endVertexName, int weight) {
+        Edge e = new Edge(startVertexName, endVertexName, weight);
+        return addEdge(e);
+    }
+
+    private boolean addEdge(Edge e) {
+        List<Edge> temp;
+        Edge eReverse = new Edge(e.getEndVertex(), e.getStartVertex(), e.getWeight());
+        // if graph is empty, then add 2 Vertices, and add Edge e to each Vertex
+        if (graph.isEmpty()) {
+            temp = new LinkedList<>();
+            temp.add(e);
+            graph.put(e.getStartVertex(), temp);
+            temp = new LinkedList<>();
+            temp.add(eReverse);
+            graph.put(e.getEndVertex(), temp);
+            return true;
+        }
+        if (graph.containsKey(e.getStartVertex())) {
+            if (graph.containsKey(e.getEndVertex())) {
+                // if graph have both Start and End Vertices, then add Edge e to each Vertex
+                temp = graph.get(e.getStartVertex());
+                temp.add(e);
+                temp = graph.get(e.getEndVertex());
+                temp.add(eReverse);
+            } else {
+                // if graph have only Start Vertex, then add End Vertex, and add Edge e to each Vertex
+                temp = graph.get(e.getStartVertex());
+                temp.add(e);
+                temp = new LinkedList<>();
+                temp.add(eReverse);
+                graph.put(e.getEndVertex(), temp);
+            }
+        } else if (graph.containsKey(e.getEndVertex())) {
+            // if graph have only End Vertex, then add Start Vertex, and add Edge e to each Vertex
+            temp = graph.get(e.getEndVertex());
+            temp.add(eReverse);
+            temp = new LinkedList<>();
+            temp.add(e);
+            graph.put(e.getStartVertex(), temp);
+        } else {
+            // if graph don`t have Start or End Vertices, then add 2 Vertices, and add Edge e to each Vertex
+            temp = new LinkedList<>();
+            temp.add(e);
+            graph.put(e.getStartVertex(), temp);
+            temp = new LinkedList<>();
+            temp.add(eReverse);
+            graph.put(e.getEndVertex(), temp);
+        }
+
+
+        return true;
+    }
     @Override
     public String toString() {
         String str = "";
@@ -81,24 +136,90 @@ public class Graph {
         return str;
     }
 
+    public Boolean isEmpty() {
+        return graph.isEmpty();
+    }
+
+    /**
+     * Judging whether the Graph is Connected by using DFS
+     * return false when graph is empty
+     * Complexity:
+     */
+    public Boolean isConnected() {
+        Stack<Vertex> stack = new Stack<Vertex>();
+        Set<Vertex> unvisitedVertices;
+        Vertex currentVertex;
+        if (this.isEmpty()) return false;
+        unvisitedVertices = new HashSet<>(graph.keySet());
+        currentVertex = unvisitedVertices.iterator().next();
+
+        stack.push(currentVertex);
+        while (!stack.isEmpty()) {
+            currentVertex = stack.pop();
+            if (unvisitedVertices.contains(currentVertex)) {
+                unvisitedVertices.remove(currentVertex);
+                for (Edge e : graph.get(currentVertex))
+                    if (unvisitedVertices.contains(e.getEndVertex()))
+                        stack.push(e.getEndVertex());
+            }
+        }
+        return unvisitedVertices.isEmpty();
+
+    }
+
+    /**
+     * Judging whether the Graph has Circle by using DFS
+     * return false when graph is empty
+     * Complexity:
+     */
+    public Boolean hasCircle() {
+        Stack<Vertex> stack = new Stack<Vertex>();
+        Set<Vertex> unvisitedVertices;
+        Vertex currentVertex;
+        Vertex preVertex = null;
+        if (this.isEmpty()) return false;
+        unvisitedVertices = new HashSet<>(graph.keySet());
+        currentVertex = unvisitedVertices.iterator().next();
+
+        stack.push(currentVertex);
+        while (!stack.isEmpty()) {
+            currentVertex = stack.pop();
+            if (unvisitedVertices.contains(currentVertex)) {
+                unvisitedVertices.remove(currentVertex);
+                preVertex = currentVertex;
+                for (Edge e : graph.get(currentVertex)) {
+                    if (!unvisitedVertices.contains(e.getEndVertex()) && !e.getEndVertex().equals(preVertex))
+                        return true;
+                    else
+                        stack.push(e.getEndVertex());
+                }
+
+
+            }
+        }
+        return unvisitedVertices.isEmpty();
+
+    }
+
     /**
      * Prim`s Algorithm for MST
      * Complexity: V * V * log(V)
      * */
-    public List<Edge> PrimMST(Vertex startVertex) {
+    public List<Edge> PrimMST(Vertex startVertex) throws Exception {
         List<Edge> result = new LinkedList<>();     // store the MST
         MinHeap minHeap = new MinHeap();
         Edge currentEdge;
         Vertex currentVertex = startVertex;
         List<Edge> temp;   // temp store the Edge List of the Current Vertex
-        HashSet<Vertex> vertexSet = new HashSet<>(graph.keySet());     // use a set to traversal all Vertices
-
+        HashSet<Vertex> unvisitedVertices = new HashSet<>(graph.keySet());     // use a set to traversal all Vertices
+        if (unvisitedVertices.isEmpty() || !unvisitedVertices.contains(startVertex))
+            throw new Exception("Can`t find the Start Vertex in Graph");
         // find and mark the start Vertex
-        vertexSet.remove(startVertex);
+        unvisitedVertices.remove(startVertex);
         /**
          * Complexity: V * V * log(V)
          * */
-        while (!vertexSet.isEmpty()) {
+        while (!unvisitedVertices.isEmpty()) {
             // put the Edges linked to current Vertex to MinHeap
             temp = graph.get(currentVertex);
 
@@ -107,7 +228,7 @@ public class Graph {
              * Complexity: V * log(V)
              * */
             for (Edge e : temp) {
-                if (vertexSet.contains(e.getEndVertex()))
+                if (unvisitedVertices.contains(e.getEndVertex()))
                 /**
                  * Replace the element having the same endVertex or add the element
                  * Complexity: log(number of Vertex: V )
@@ -122,20 +243,22 @@ public class Graph {
             // add the selected edge to the MST
             result.add(currentEdge);
             // find and mark the current Vertex
-            vertexSet.remove(currentVertex);
+            unvisitedVertices.remove(currentVertex);
         }
         return result;
     }
 
     /**
-     * Dijkstra`s Algorithm for MST
-     * <p>
+     * Dijkstra`s Algorithm for Problem:
+     *      Shortest path from single Vertex to all Vertices
      * Complexity: V * V * log(V)
      */
-    public Map<Vertex, Integer> Dijkstra(Vertex startVertex) {
+    public Map<Vertex, Integer> Dijkstra(Vertex startVertex) throws Exception {
         Map<Vertex, Integer> result = new HashMap<Vertex, Integer>();
         MinHeap minHeap = new MinHeap();
         List<Edge> temp;   // temp store the Edge List of the Current Vertex
+        if (graph.isEmpty() || !graph.containsKey(startVertex))
+            throw new Exception("Can`t find the Start Vertex in Graph");
         Vertex currentVertex = startVertex;
         Edge currentEdge = new Edge(startVertex, startVertex, 0);
 
@@ -144,9 +267,9 @@ public class Graph {
          * Complexity: V * V * log(V)
          * */
         while (result.size() < graph.size()) {
-            temp = graph.get(currentVertex);
 
-            if (temp.isEmpty()) break;
+            temp = graph.get(currentVertex);
+            if (temp == null || temp.isEmpty()) break;
             /**
              * Complexity: V * log(V)
              * */
@@ -169,6 +292,34 @@ public class Graph {
             // add the selected edge to the MST
             result.put(currentVertex, currentEdge.getWeight());
         }
+        return result;
+    }
+
+    /**
+     * Kruskal Algorithm for MST
+     * <p>
+     * Complexity:
+     */
+    public List<Edge> Kruskal(Vertex startVertex) throws Exception {
+        List<Edge> result = new LinkedList<>();
+        MinHeap minHeap = new MinHeap();
+        Edge currentEdge;
+        Set<Vertex> unvisitedVertices = new HashSet<>(graph.keySet());
+        if (unvisitedVertices.isEmpty() || !unvisitedVertices.contains(startVertex))
+            throw new Exception("Can`t find the Start Vertex in Graph");
+        /**
+         * inserted all edges to the Minimum Heap
+         * ignore the "coming back" edge, as for Undirected Graph
+         * Complexity: Number of Edges (E)
+         * */
+        for (Map.Entry<Vertex, List<Edge>> graphEntry : graph.entrySet()) {
+            for (Edge e : graphEntry.getValue()) {
+                if (minHeap.find(e.getEndVertex(), e.getStartVertex()) == null)
+                    minHeap.insert(e);
+            }
+        }
+        currentEdge = minHeap.popMin();
+
         return result;
     }
 }
