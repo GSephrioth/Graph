@@ -5,14 +5,13 @@ package WeightedGraph;
  * Only contains VertexName
  * Created by cxz on 2016/10/2.
  */
-public class Vertex {
+class Vertex {
     private String vertexName;
-    private boolean mark = false;
+    private Vertex preVertex;
 
     public Vertex() {
         this.vertexName = "";
     }
-
     public Vertex(String nodeName) {
         this.vertexName = nodeName;
     }
@@ -21,18 +20,13 @@ public class Vertex {
         return vertexName;
     }
 
-    public void mark() {
-        this.mark = true;
+    Vertex getPreVertex() {
+        return preVertex;
     }
 
-    public void unMark() {
-        this.mark = false;
+    void setPreVertex(Vertex v) {
+        preVertex = v;
     }
-
-    public boolean isMarked() {
-        return this.mark;
-    }
-
     @Override
     public String toString() {
         String str;

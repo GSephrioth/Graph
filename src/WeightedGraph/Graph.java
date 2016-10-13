@@ -248,7 +248,6 @@ public class Graph {
         Vertex v = new Vertex(vertexName);
         return PrimMST(v);
     }
-
     private List<Edge> PrimMST(Vertex startVertex) throws Exception {
         List<Edge> result = new LinkedList<>();     // store the MST
         MinHeap minHeap = new MinHeap();
@@ -295,13 +294,12 @@ public class Graph {
     /**
      * Dijkstra`s Algorithm for Problem:
      *      Shortest path from single Vertex to all Vertices
-     * Complexity: V * V * log(V)
+     * Complexity: E * log(V)
      */
     public Map<Vertex, Integer> Dijkstra(String vertexName) throws Exception {
         Vertex v = new Vertex(vertexName);
         return Dijkstra(v);
     }
-
     private Map<Vertex, Integer> Dijkstra(Vertex startVertex) throws Exception {
         Map<Vertex, Integer> result = new HashMap<>();
         MinHeap minHeap = new MinHeap();
@@ -313,14 +311,15 @@ public class Graph {
 
         result.put(startVertex, currentEdge.getWeight());
         /**
-         * Complexity: V * V * log(V)
+         * go through all the Edges to find the minimum Path
+         * Complexity: E * log(V)
          * */
         while (result.size() < graph.size()) {
 
             temp = graph.get(currentVertex);
             if (temp == null || temp.isEmpty()) break;
             /**
-             * Complexity: V * log(V)
+             * Complexity: log(V) * number of Edges Linked to Current Vertex
              * */
             for (Edge e : temp) {
                 if (!result.keySet().contains(e.getEndVertex())) {
@@ -328,7 +327,7 @@ public class Graph {
                     Edge t = new Edge(currentEdge.getStartVertex(), e.getEndVertex(), currentEdge.getWeight() + e.getWeight());
                     /**
                      * Replace the element having the same endVertex or add the element
-                     * Complexity: log(number of Vertex: V )
+                     * Complexity: log(V-1)
                      */
                     minHeap.update(t);
                 }
