@@ -1,12 +1,10 @@
 package Test;
 
-import BinaryTree.BinarySearchTree;
-import WeightedGraph.*;
-import com.sun.org.apache.xpath.internal.SourceTree;
+import BinaryTree.AVLTree;
+
 
 import java.lang.*;
-import java.io.*;
-import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
 	public static void main(String args[]){
@@ -29,24 +27,58 @@ public class Main {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        BinarySearchTree<Integer> tree = new BinarySearchTree<>();
-        Random r = new Random();
+        Scanner scan = new Scanner(System.in);
+        /* Creating object of AVLTree */
+        AVLTree<Integer> avlt = new AVLTree<>();
 
-        r.setSeed(3);
-        for (int i = 0; i < 20; i++) {
-            tree.insert(r.nextInt(200));
-        }
+        int[] array = {3, 10, 9, 5, 2, 10, 20, 22, 33, 10, 12};
+        for (int i : array) avlt.insert(i);
 
-        System.out.println(tree);
-    }
+        System.out.println("AVLTree Tree Test\n");
+        char ch;
+        /*  Perform tree operations  */
+        do {
+            System.out.println("\nAVLTree Operations\n");
+            System.out.println("1. insert ");
+            System.out.println("2. search");
+            System.out.println("3. count nodes");
+            System.out.println("4. check empty");
+            System.out.println("5. clear tree");
 
-    /**
-     * Find out the longest
-     */
-    public static void LCS() {
-        String s1 = null;
-        String s2 = null;
-        s1 = "abcdaf";
-        s2 = "acbcf";
+            int choice = scan.nextInt();
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter integer element to insert");
+                    avlt.insert(scan.nextInt());
+                    break;
+                case 2:
+                    System.out.println("Enter integer element to search");
+//                    System.out.println("Search result : "+ avlt.search( scan.nextInt() ));
+                    break;
+                case 3:
+//                    System.out.println("Nodes = "+ avlt.countNodes());
+                    break;
+                case 4:
+                    System.out.println("Empty status = " + avlt.isEmpty());
+                    break;
+                case 5:
+                    System.out.println("\nTree Cleared");
+                    avlt.makeEmpty();
+                    break;
+                default:
+                    System.out.println("Wrong Entry \n ");
+                    break;
+            }
+            /*  Display tree  */
+            System.out.println("\nPost order : ");
+            avlt.postorder();
+            System.out.println("\nPre order : ");
+            avlt.preorder();
+            System.out.println("\nIn order : ");
+            avlt.inorder();
+
+            System.out.println("\nDo you want to continue (Type y or n) \n");
+            ch = scan.next().charAt(0);
+        } while (ch == 'Y' || ch == 'y');
     }
 }

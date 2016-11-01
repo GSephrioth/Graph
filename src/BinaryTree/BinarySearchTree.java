@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 /**
  * Binary BinarySearchTree designed for generics
- * leftChild < parent < rightChild
+ * leftChild < currentNode < rightChild
  * Created by cxz on 2016/10/9.
  */
 public class BinarySearchTree<T> {
@@ -64,6 +64,10 @@ public class BinarySearchTree<T> {
         root = remove(x, root);
     }
 
+    public boolean sameAs(BinaryNode<T> t) {
+        return sameAs(root, t);
+    }
+
     @Override
     public String toString() {
         StringBuilder strB = new StringBuilder();
@@ -77,7 +81,7 @@ public class BinarySearchTree<T> {
         return strB.toString();
     }
 
-    private int CompareT(T a, T b) {
+    private int compareT(T a, T b) {
         if (cmp != null) return cmp.compare(a, b);
         return ((Comparable) a).compareTo(b);
     }
@@ -91,7 +95,7 @@ public class BinarySearchTree<T> {
      */
     private boolean contains(T x, BinaryNode<T> t) {
         if (t == null) return false;
-        int result = CompareT(x, t.element);
+        int result = compareT(x, t.element);
         if (result < 0) return contains(x, t.leftChild);
         else if (result > 0) return contains(x, t.rightChild);
         return true;
@@ -130,7 +134,7 @@ public class BinarySearchTree<T> {
      */
     private BinaryNode<T> insert(T x, BinaryNode<T> t) {
         if (t == null) return new BinaryNode<T>(x);
-        int result = CompareT(x, t.element);
+        int result = compareT(x, t.element);
         if (result < 0) t.leftChild = insert(x, t.leftChild);
         else if (result > 0) t.rightChild = insert(x, t.rightChild);
         else ;  // Duplicate; do nothing
@@ -146,7 +150,7 @@ public class BinarySearchTree<T> {
      */
     private BinaryNode<T> remove(T x, BinaryNode<T> t) {
         if (t == null) return t; // Item not found; do nothing
-        int result = CompareT(x, t.element);
+        int result = compareT(x, t.element);
         if (result < 0) t.leftChild = remove(x, t.leftChild);
         else if (result > 0) t.rightChild = remove(x, t.rightChild);
         else if (t.leftChild != null && t.rightChild != null) { // Two children
@@ -182,5 +186,15 @@ public class BinarySearchTree<T> {
             stringBuilder.append(" , ");
             printTree(t.rightChild, stringBuilder);
         }
+    }
+
+    private boolean sameAs(BinaryNode<T> t1, BinaryNode<T> t2) {
+        if (t1 == null || t2 == null) return false;
+        else if ((t1.leftChild == null && t2.leftChild != null) ||
+                (t1.rightChild == null && t2.rightChild != null) ||
+                (t1.leftChild != null && t2.leftChild == null) ||
+                (t1.rightChild != null && t2.rightChild == null))
+            return false;
+        else return sameAs(t1.leftChild, t2.leftChild) && sameAs(t1.rightChild, t2.rightChild);
     }
 }
