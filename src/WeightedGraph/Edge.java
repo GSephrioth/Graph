@@ -5,22 +5,24 @@ package WeightedGraph;
  * Contains: Weight, Vertex
  * Created by cxz on 2016/10/2.
  */
-class Edge {
-    private int weight;
-    private Vertex endVertex;
-    private Vertex startVertex;
+public class Edge {
+    protected int weight;
+    protected Vertex endVertex;
+    protected Vertex startVertex;
 
-    Edge() {
+    protected Edge() {
         this.weight = Integer.MAX_VALUE;
-        this.startVertex = new Vertex("");
-        this.endVertex = new Vertex("");
+        this.startVertex = null;
+        this.endVertex = null;
     }
-    Edge(String startVertex, String endVertex, int weight) {
+
+    protected Edge(String startVertex, String endVertex, int weight) {
         this.weight = weight;
         this.startVertex = new Vertex(startVertex);
         this.endVertex = new Vertex(endVertex);
     }
-    Edge(Vertex startVertex, Vertex endVertex, int weight) {
+
+    protected Edge(Vertex startVertex, Vertex endVertex, int weight) {
         this.startVertex = startVertex;
         this.endVertex = endVertex;
         this.weight = weight;
@@ -53,14 +55,20 @@ class Edge {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        /**
+         * In this way, if you create an instance 'a' based on any subclass of Edge, and use a.equals(Edge e), you will always get false
+         * if (o == null || getClass() != o.getClass()) return false;
+         *
+         * But in this way, you can create an instance 'a' based on any subclass of Edge, and use a.equals(Edge e)
+         */
+        if (o == null || Edge.class != o.getClass()) return false;
         Edge e = (Edge) o;
         return e.endVertex.equals(endVertex) && e.startVertex.equals(startVertex) && e.weight == weight;
     }
     @Override
     public String toString() {
         String str;
-        str = " (" + this.startVertex + "," + this.endVertex + "," + this.weight + ") ";
+        str = " (" + this.startVertex.getVertexName() + "," + this.endVertex.getVertexName() + "," + this.weight + ") ";
         return str;
     }
 

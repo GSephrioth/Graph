@@ -1,7 +1,8 @@
 package WeightedGraph;
 
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Minimum Heap
@@ -12,7 +13,7 @@ import java.util.*;
 public class MinHeap {
     private List<Edge> heap;
 
-    MinHeap() {
+    public MinHeap() {
         this.heap = new ArrayList<>();
     }
 

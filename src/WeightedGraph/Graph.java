@@ -1,6 +1,9 @@
 package WeightedGraph;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -10,7 +13,7 @@ import java.util.*;
  * Created by cxz on 2016/10/2.
  */
 public class Graph {
-    private HashMap<Vertex, List<Edge>> graph; // a graph using Vertex as key, and Edge as value
+    protected HashMap<Vertex, List<Edge>> graph; // a graph using Vertex as key, and Edge as value
     /**
      * initialize an empty graph
      * Complexity: constant
@@ -63,13 +66,12 @@ public class Graph {
             reader.close(); //close the Buffered Reader
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         temp.clear();
     }
 
-    public boolean addEdge(String startVertexName, String endVertexName, int weight) {
+    protected boolean addEdge(String startVertexName, String endVertexName, int weight) {
         Edge e = new Edge(startVertexName, endVertexName, weight);
         return addEdge(e);
     }
@@ -78,7 +80,7 @@ public class Graph {
      * add an Edge to the Graph
      * Complexity: constant
      */
-    private boolean addEdge(Edge edge) {
+    protected boolean addEdge(Edge edge) {
         List<Edge> temp;
         Edge eReverse = edge.reverse();
         // if graph is empty, then add 2 Vertices, and add Edge e to each Vertex
@@ -95,13 +97,15 @@ public class Graph {
             if (graph.containsKey(edge.getEndVertex())) {
                 // if graph have both Start and End Vertices, then add Edge e to each Vertex
                 temp = graph.get(edge.getStartVertex());
-                temp.add(edge);
+                if (!temp.contains(edge))
+                    temp.add(edge);
                 temp = graph.get(edge.getEndVertex());
-                temp.add(eReverse);
+                if (!temp.contains(eReverse))
+                    temp.add(eReverse);
             } else {
                 // if graph have only Start Vertex, then add End Vertex, and add Edge e to each Vertex
                 temp = graph.get(edge.getStartVertex());
-                temp.add(edge);
+                if (!temp.contains(edge)) temp.add(edge);
                 temp = new LinkedList<>();
                 temp.add(eReverse);
                 graph.put(edge.getEndVertex(), temp);
@@ -109,7 +113,7 @@ public class Graph {
         } else if (graph.containsKey(edge.getEndVertex())) {
             // if graph have only End Vertex, then add Start Vertex, and add Edge e to each Vertex
             temp = graph.get(edge.getEndVertex());
-            temp.add(eReverse);
+            if (!temp.contains(eReverse)) temp.add(eReverse);
             temp = new LinkedList<>();
             temp.add(edge);
             graph.put(edge.getStartVertex(), temp);
@@ -154,7 +158,7 @@ public class Graph {
             str = "Empty graph!";
         else {
             for (Map.Entry<Vertex, List<Edge>> entry : graph.entrySet()) {
-                str += entry.getKey() + entry.getValue().toString() + "\n";
+                str += entry.getKey().getVertexName() + entry.getValue().toString() + "\n";
             }
         }
         return str;
