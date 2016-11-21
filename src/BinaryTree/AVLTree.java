@@ -9,7 +9,7 @@ import java.util.Comparator;
  * Created by cxz on 2016/10/9.
  */
 public class AVLTree<T> {
-    private BinaryNode<T> root;
+    private AVLNode root;
     private Comparator<T> comparator;
     public AVLTree() {
         this.root = null;
@@ -52,6 +52,10 @@ public class AVLTree<T> {
         root = remove(x, root);
     }
 
+    public boolean sameAs(AVLTree<T> t) {
+        return sameAs(root, t.root);
+    }
+
     /**
      * Use Comparator to compare a and b
      *
@@ -69,7 +73,7 @@ public class AVLTree<T> {
      * @param node1,node2 are two nodes for comparation
      * @return result of Maximum Height among two nodes
      **/
-    private int maxHeight(BinaryNode<T> node1, BinaryNode<T> node2) {
+    private int maxHeight(AVLNode node1, AVLNode node2) {
         int h1, h2;
         if (node1 == null) h1 = 0;
         else h1 = node1.height;
@@ -85,9 +89,9 @@ public class AVLTree<T> {
      * @param root is the root Node of subtree, which Lost Balance
      * @return root node of subtree after Rotating.
      */
-    private BinaryNode<T> singleRotateLeft(BinaryNode<T> root) {
-        System.out.println("L");
-        BinaryNode<T> lChild;
+    private AVLNode singleRotateLeft(AVLNode root) {
+//        System.out.println("L");
+        AVLNode lChild;
         if (root == null) return null;
         // Do a Simple Left Rotation
         lChild = root.leftChild;
@@ -99,9 +103,9 @@ public class AVLTree<T> {
         return lChild;
     }
 
-    private BinaryNode<T> singleRotateRight(BinaryNode<T> root) {
-        System.out.println("R");
-        BinaryNode<T> rChild;
+    private AVLNode singleRotateRight(AVLNode root) {
+//        System.out.println("R");
+        AVLNode rChild;
         if (root == null) return null;
         // Do a Simple Right Rotation
         rChild = root.rightChild;
@@ -113,16 +117,16 @@ public class AVLTree<T> {
         return rChild;
     }
 
-    private BinaryNode<T> doubleRotateLR(BinaryNode<T> root) {
-        System.out.println("LR");
+    private AVLNode doubleRotateLR(AVLNode root) {
+//        System.out.println("LR");
         // First do a Left Rotation
         root.rightChild = singleRotateLeft(root.rightChild);
         // Then do a Right Rotation
         return singleRotateRight(root);
     }
 
-    private BinaryNode<T> doubleRotateRL(BinaryNode<T> root) {
-        System.out.println("RL");
+    private AVLNode doubleRotateRL(AVLNode root) {
+//        System.out.println("RL");
         // First do a Right Rotation
         root.leftChild = singleRotateRight(root.leftChild);
         // Then do a Left Rotation
@@ -136,7 +140,7 @@ public class AVLTree<T> {
      * @param t the node that roots the subtree.
      * @return node containing the matched item.
      */
-    private boolean contains(T x, BinaryNode<T> t) {
+    private boolean contains(T x, AVLNode t) {
         if (t == null) return false;
         int result = compareTo(x, t.element);
         if (result < 0) return contains(x, t.leftChild);
@@ -150,7 +154,7 @@ public class AVLTree<T> {
      * @param t the node that roots the subtree.
      * @return node containing the smallest item.
      */
-    private BinaryNode<T> findMin(BinaryNode<T> t) {
+    private AVLNode findMin(AVLNode t) {
         if (t == null) return null;
         if (t.leftChild == null) return t;
         return findMin(t.leftChild);
@@ -162,7 +166,7 @@ public class AVLTree<T> {
      * @param t the node that roots the subtree.
      * @return node containing the largest item.
      */
-    private BinaryNode<T> findMax(BinaryNode<T> t) {
+    private AVLNode findMax(AVLNode t) {
         if (t == null) return null;
         if (t.rightChild == null) return t;
         return findMax(t.rightChild);
@@ -175,9 +179,9 @@ public class AVLTree<T> {
      * @param root the node that roots the subtree.
      * @return the new root of the subtree.
      */
-    private BinaryNode<T> insert(T x, BinaryNode<T> root) {
+    private AVLNode insert(T x, AVLNode root) {
         // create a new subtree with only one Node
-        if (root == null) return new BinaryNode<>(x);
+        if (root == null) return new AVLNode(x);
 
         int cmp = compareTo(x, root.element);
         int balanceFactor;
@@ -224,7 +228,7 @@ public class AVLTree<T> {
      * @param t the node that roots the subtree.
      * @return the new root of the subtree.
      */
-    private BinaryNode<T> remove(T x, BinaryNode<T> t) {
+    private AVLNode remove(T x, AVLNode t) {
         // element not found print error
         if (t == null) {
             System.err.println("Sorry but you're mistaken, " + x + " doesn't exist in this tree :)" + System.getProperty("line.separator"));
@@ -295,7 +299,7 @@ public class AVLTree<T> {
      * @param t             root of the tree
      * @param stringBuilder output String
      */
-    private void printTree(BinaryNode<T> t, StringBuilder stringBuilder) {
+    private void printTree(AVLNode t, StringBuilder stringBuilder) {
         if (t != null) {
             printTree(t.leftChild, stringBuilder);
             stringBuilder.append("Node: ");
@@ -307,20 +311,37 @@ public class AVLTree<T> {
         }
     }
 
-    private class BinaryNode<T> {
+    /**
+     * Check Two trees t1 and t2, if they have the same structure
+     * !!Attention!! This function does not care about values in tree nodes
+     *
+     * @param t1,t2 root nodes of two trees
+     * @return True if two trees have same structure, otherwise return False
+     */
+    private boolean sameAs(AVLNode t1, AVLNode t2) {
+        if (t1 == null || t2 == null) return true;
+        else if ((t1.leftChild == null && t2.leftChild != null) ||
+                (t1.rightChild == null && t2.rightChild != null) ||
+                (t1.leftChild != null && t2.leftChild == null) ||
+                (t1.rightChild != null && t2.rightChild == null))
+            return false;
+        else return sameAs(t1.leftChild, t2.leftChild) && sameAs(t1.rightChild, t2.rightChild);
+    }
+
+    private class AVLNode {
         T element;      // Value of this Node
         int height;     // Height of this Node
-        BinaryNode<T> leftChild;    // Left Child Node of this Node
-        BinaryNode<T> rightChild;   // Right Child Node of this Node
+        AVLNode leftChild;    // Left Child Node of this Node
+        AVLNode rightChild;   // Right Child Node of this Node
 
-        BinaryNode(T element) {
+        AVLNode(T element) {
             this.element = element;
             this.leftChild = null;
             this.rightChild = null;
             this.height = 1;
         }
 
-        BinaryNode(T element, BinaryNode<T> leftChild, BinaryNode<T> rightChild) {
+        AVLNode(T element, AVLNode leftChild, AVLNode rightChild) {
             this.element = element;
             this.leftChild = leftChild;
             this.rightChild = rightChild;
