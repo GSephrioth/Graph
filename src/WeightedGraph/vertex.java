@@ -2,25 +2,26 @@ package WeightedGraph;
 
 /**
  * Vertex of Undirected and Weighted Graph
- * Only contains VertexName
+ * Only contains vertexName
  * Created by cxz on 2016/10/2.
  */
-class Vertex {
+public class Vertex {
     private String vertexName;
     private Vertex preVertex;
 
-    public Vertex() {
+    protected Vertex() {
         this.vertexName = "";
     }
-    public Vertex(String nodeName) {
+
+    protected Vertex(String nodeName) {
         this.vertexName = nodeName;
     }
 
-    String getVertexName() {
+    public String getVertexName() {
         return vertexName;
     }
 
-    Vertex getPreVertex() {
+    protected Vertex getPreVertex() {
         return preVertex;
     }
 
